@@ -1,6 +1,7 @@
 import requests
 import re
 import json
+import datetime as dt
 from bs4 import BeautifulSoup as BS
 
 NO_INFO = 'Информация отсутствует'
@@ -29,7 +30,14 @@ def parse_movie_data(raw_data):
     format_duration = re.sub(r'PT(\d+)H(\d+)M', lambda m: str(int(m.group(1)) * 60 + int(m.group(2))),
                              format_duration)
     movie['duration'] = format_duration
-    movie['release'] = re.sub(r'(\d{4}).*', r'\1', raw_data['datePublished'])
+    release = raw_data.get('datePublished')
+    if release is None:
+        year = NO_INFO
+    else:
+        release = release[0:release.find('T')]
+        year = dt.datetime.strptime(release, "%Y-%M-%d").date()
+    print(year)
+    movie['release'] = year
     movie['voted'] = raw_data.get('aggregateRating', {'ratingCount': 0})['ratingCount']
     movie['rating'] = raw_data.get('aggregateRating', {'ratingValue': 0})['ratingValue']
     movie['url'] = raw_data.get('url')
