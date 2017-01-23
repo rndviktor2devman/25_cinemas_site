@@ -26,9 +26,9 @@ def parse_movie_data(raw_data):
     movie['description'] = raw_data.get('description', NO_INFO)
     movie['genre'] = raw_data.get('genre')
     format_duration = raw_data.get('duration', {'name': NO_INFO})['name']
-    movie['duration'] = re.sub(r'PT(\d+)H(\d+M)',
-                               lambda t: str(int(t.group(1)) * 60 +
-                                             int(t.group(2))), format_duration)
+    format_duration = re.sub(r'PT(\d+)H(\d+)M', lambda m: str(int(m.group(1)) * 60 + int(m.group(2))),
+                             format_duration)
+    movie['duration'] = format_duration
     movie['release'] = re.sub(r'(\d{4}).*', r'\1', raw_data['datePublished'])
     movie['voted'] = raw_data.get('aggregateRating', {'ratingCount': 0})['ratingCount']
     movie['rating'] = raw_data.get('aggregateRating', {'ratingValue': 0})['ratingValue']
