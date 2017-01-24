@@ -32,7 +32,9 @@
         {% for movie in movies %}
         <div class="movie col-md-12">
           <div class="col-md-4">
-            <img src="{{ movie['image'] }}" class="img-rounded movie_image" alt="{{ movie['title'] }}">
+            <div class="moviediv">
+              <img src="{{ movie['image'] }}" class="img-rounded movie_image" alt="{{ movie['title'] }}">
+            </div>
             <ul>
               <li><b>Режиссёр: </b>{{ movie['director'] }}</li>
               <li><b>Продолжительность: </b>{{ movie['duration'] }}</li>

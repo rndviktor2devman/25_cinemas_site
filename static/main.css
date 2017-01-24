@@ -6,8 +6,13 @@
 }
 
 .movie_image{
-    margin-bottom: 30px;
-    margin-top: 10px;
     max-width: 350px;
     max-height: 200px;
+    display: block;
+    margin: 0 auto;
+}
+
+.moviediv{
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
