@@ -33,7 +33,10 @@
         <div class="movie col-md-12">
           <div class="col-md-4">
             <div class="moviediv">
-              <img src="{{ movie['image'] }}" class="img-rounded movie_image" alt="{{ movie['title'] }}">
+              <a href="{{ movie['url'] }}">
+                <img src="{{ movie['image'] }}" class="img-rounded movie_image" alt="{{ movie['title'] }}">
+              </a>
+
             </div>
             <ul>
               <li><b>Режиссёр: </b>{{ movie['director'] }}</li>
@@ -42,6 +45,9 @@
             </ul>
           </div>
           <div class="col-md-7">
+            <div class="row">
+              <h2><a href="{{ movie['url'] }}">{{ movie['name'] }}</a></h2>
+            </div>
             <div class="row">
               <ul>
                 <li><b>Жанр: </b>{{ movie['genre'] }}</li>

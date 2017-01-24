@@ -27,6 +27,7 @@ def parse_movie_data(raw_data):
     movie['text'] = raw_data.get('text', NO_INFO)
     movie['description'] = raw_data.get('description', NO_INFO)
     movie['genre'] = raw_data.get('genre')
+    movie['name'] = raw_data.get('name', NO_INFO)
     format_duration = raw_data.get('duration', {'name': NO_INFO})['name']
     format_duration = re.sub(r'PT(\d+)H(\d+)M', lambda m: str(int(m.group(1)) * 60 + int(m.group(2))),
                              format_duration)
