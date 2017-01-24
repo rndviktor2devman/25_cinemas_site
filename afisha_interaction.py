@@ -5,6 +5,7 @@ import datetime as dt
 from bs4 import BeautifulSoup as BS
 
 NO_INFO = 'Информация отсутствует'
+STATIC_IMAGE = "static/img/no_poster.png"
 
 
 def fetch_afisha_page():
@@ -42,5 +43,9 @@ def parse_movie_data(raw_data):
     movie['voted'] = raw_data.get('aggregateRating', {'ratingCount': 0})['ratingCount']
     movie['rating'] = raw_data.get('aggregateRating', {'ratingValue': 0})['ratingValue']
     movie['url'] = raw_data.get('url')
-    movie['image'] = raw_data.get('image')
+    img_url = raw_data.get('image')
+    if img_url is None:
+        img_url = STATIC_IMAGE
+    movie['image'] = img_url
+
     return movie
