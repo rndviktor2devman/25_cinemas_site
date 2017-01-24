@@ -16,3 +16,12 @@
     margin-top: 10px;
     margin-bottom: 20px;
 }
+
+.warn{
+    margin-bottom: 30px;
+    margin-top: 30px;
+    font-size: 18px;
+    background-color: darkorange;
+    text-align: center;
+    border-radius: 5px;
+}
