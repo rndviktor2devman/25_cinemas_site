@@ -8,11 +8,6 @@ NO_INFO = 'Информация отсутствует'
 STATIC_IMAGE = "static/img/no_poster.png"
 
 
-def fetch_afisha_page():
-    url = "http://www.afisha.ru/msk/schedule_cinema/"
-    return requests.get(url).content
-
-
 def movie_refs(base_page):
     soup = BS(base_page, 'lxml')
     movie_tags = soup.findAll(string=re.compile(r'\w+'), href=re.compile(r'movie/[0-9]+'))
