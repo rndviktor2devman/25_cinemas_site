@@ -27,7 +27,7 @@ def parse_movie_data(raw_data):
     format_duration = re.sub(r'PT(\d+)H(\d+)M', lambda m: str(int(m.group(1)) * 60 + int(m.group(2))),
                              format_duration)
     if format_duration != NO_INFO:
-        format_duration += ' мин.'
+        format_duration += ' мин.'.encode('utf-8')
     movie['duration'] = format_duration
     release = raw_data.get('datePublished')
     if release is None:
