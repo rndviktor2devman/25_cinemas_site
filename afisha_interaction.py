@@ -15,7 +15,7 @@ def fetch_afisha_page():
 def movie_refs(base_page):
     soup = BS(base_page, 'lxml')
     movie_tags = soup.findAll(string=re.compile(r'\w+'), href=re.compile(r'movie/[0-9]+'))
-    return ['http:' + tag['href'] for tag in movie_tags]
+    return ['http:' + tag['href'] for tag in set(movie_tags)]
 
 
 def parse_movie_data(raw_data):
@@ -29,6 +29,8 @@ def parse_movie_data(raw_data):
     format_duration = raw_data.get('duration', {'name': NO_INFO})['name']
     format_duration = re.sub(r'PT(\d+)H(\d+)M', lambda m: str(int(m.group(1)) * 60 + int(m.group(2))),
                              format_duration)
+    if format_duration != NO_INFO:
+        format_duration += ' мин.'
     movie['duration'] = format_duration
     release = raw_data.get('datePublished')
     if release is None:
@@ -36,7 +38,6 @@ def parse_movie_data(raw_data):
     else:
         release = release[0:release.find('T')]
         year = dt.datetime.strptime(release, "%Y-%M-%d").date()
-    print(year)
     movie['release'] = year
     movie['voted'] = raw_data.get('aggregateRating', {'ratingCount': 0})['ratingCount']
     movie['rating'] = raw_data.get('aggregateRating', {'ratingValue': 0})['ratingValue']
