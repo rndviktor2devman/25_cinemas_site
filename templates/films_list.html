@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 
   </head>
 
@@ -31,11 +31,25 @@
       <div class="row">
         {% for movie in movies %}
         <div class="movie col-md-12">
-          <div class="col-md-5">
-
+          <div class="col-md-4">
+            <img src="{{ movie['image'] }}" class="img-rounded movie_image" alt="{{ movie['title'] }}">
+            <ul>
+              <li><b>Режиссёр: </b>{{ movie['director'] }}</li>
+              <li><b>Продолжительность: </b>{{ movie['duration'] }}</li>
+              <li><b>Дата релиза: </b>{{ movie['release'] }}</li>
+            </ul>
           </div>
           <div class="col-md-7">
-
+            <div class="row">
+              <ul>
+                <li><b>Жанр: </b>{{ movie['genre'] }}</li>
+                <li><b>Оценка/Голосовало: </b>{{ movie['rating'] }}<b>/</b>{{ movie['voted'] }}</li>
+              </ul>
+            </div>
+            <h3><a href="{{ movie['url'] }}">{{ movie['title'] }}</a></h3>
+            <p>{{ movie['description'] }}</p>
+            <p><b>Описание:</b></p>
+            <p>{{ movie['text'] }}</p>
           </div>
         </div>
         {% endfor %}
