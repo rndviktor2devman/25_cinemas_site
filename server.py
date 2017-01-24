@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template
 import requests
 from afisha_interaction import movie_refs, parse_movie_data
