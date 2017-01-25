@@ -13,6 +13,11 @@ def movie_refs(base_page):
     return ['http:' + tag['href'] for tag in set(movie_tags)]
 
 
+def json_data(page):
+    soup = BS(page, 'lxml')
+    return json.loads(soup.find('script', {'type': 'application/ld+json'}).text)
+
+
 def parse_movie_data(raw_data):
     movie = {}
     soup = BS(raw_data, "lxml")
