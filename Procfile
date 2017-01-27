@@ -1,1 +1,2 @@
-web: newrelic-admin run-program gunicorn -b "0.0.0.0:$PORT" -w 3 server:app
+web: gunicorn server:app --log-file=-
+web: newrelic-admin run-program gunicorn server:app
