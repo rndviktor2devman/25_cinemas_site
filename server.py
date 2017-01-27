@@ -61,7 +61,7 @@ def films_list():
         movie_page = cached(ref)
         movies_data.append(ai.parse_movie_data(movie_page))
     main_page = render_template(TEMPLATE_URL, movies=movies_data)
-    cache.add(main_page)
+    cache.add("/", main_page, MAIN_PAGE_TIMEOUT)
     return main_page
 
 if __name__ == "__main__":
