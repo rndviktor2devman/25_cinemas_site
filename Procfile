@@ -1,2 +1,1 @@
-web: gunicorn server:app --log-file=-
-web: gunicorn server:app --timeout=360
+web: newrelic-admin run-program gunicorn -b "0.0.0.0:$PORT" -w 3 server:app
