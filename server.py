@@ -49,10 +49,6 @@ def api_movie(param):
 
 @app.route("/")
 def films_list():
-    main_page = cache.get("/")
-    if main_page is not None:
-        return main_page
-    cache.delete("/")
     afisha_page = cached(AFISHA_URL)
     refs = ai.movie_refs(afisha_page)
     movies_data = []
@@ -60,9 +56,7 @@ def films_list():
     for ref in refs:
         movie_page = cached(ref)
         movies_data.append(ai.parse_movie_data(movie_page))
-    main_page = render_template(TEMPLATE_URL, movies=movies_data)
-    cache.add("/", main_page, MAIN_PAGE_TIMEOUT)
-    return main_page
+    return render_template(TEMPLATE_URL, movies=movies_data)
 
 if __name__ == "__main__":
     app.run()
