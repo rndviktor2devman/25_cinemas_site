@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, json, Response
 import requests
-from afisha_interaction import movie_refs, parse_movie_data
+import afisha_interaction as ai
 from werkzeug.contrib.cache import SimpleCache
 
 app = Flask(__name__)
@@ -9,7 +9,7 @@ cache = SimpleCache()
 
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 TEMPLATE_URL = "films_list.html"
-INDEX_URL = "/"
+API_TEMPLATE_URL = "api_desc.html"
 CACHE_TIMEOUT = 12 * 60 * 60    # 12 hours timeout
 MAIN_PAGE_TIMEOUT = 60 * 30     # 30 minutes index timeout
 
@@ -24,16 +24,45 @@ def cached(url, timeout=CACHE_TIMEOUT):
     return page.content
 
 
-@app.route(INDEX_URL)
-def films_list():
+@app.route('/api')
+def api_about():
+    return render_template(API_TEMPLATE_URL)
+
+
+@app.route('/api/list', methods=['GET'])
+def api_main():
     afisha_page = cached(AFISHA_URL)
-    refs = movie_refs(afisha_page)
+    refs = ai.movie_refs(afisha_page)
+    json_movies = []
+    for ref in refs:
+        movie_page = cached(ref)
+        json_movies.append(ai.json_data(movie_page))
+    return Response(json.dumps(json_movies, indent=2))
+
+
+@app.route('/api/movie/<int:param>/', methods=['GET'])
+def api_movie(param):
+    url = 'http://www.afisha.ru/movie/{}'.format(param)
+    movie_page = cached(url)
+    return Response(json.dumps(ai.json_data(movie_page)))
+
+
+@app.route("/")
+def films_list():
+    main_page = cache.get("/")
+    if main_page is not None:
+        return main_page
+    cache.delete("/")
+    afisha_page = cached(AFISHA_URL)
+    refs = ai.movie_refs(afisha_page)
     movies_data = []
     print('found %d movies' % len(refs))
     for ref in refs:
         movie_page = cached(ref)
-        movies_data.append(parse_movie_data(movie_page))
-    return render_template(TEMPLATE_URL, movies=movies_data)
+        movies_data.append(ai.parse_movie_data(movie_page))
+    main_page = render_template(TEMPLATE_URL, movies=movies_data)
+    cache.add("/", main_page, MAIN_PAGE_TIMEOUT)
+    return
 
 if __name__ == "__main__":
     app.run()

@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="static/img/favicon.ico">
 
-    <title>Что в кино</title>
+    <title>Что в кино API</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
@@ -23,48 +23,45 @@
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="/">Что в кино</a>
-          <a class="navbar-brand" href="/api">API</a>
         </div>
-        <!--<div class="nav navbar-nav navbar-right">-->
-          <!--<li><a href="/api">API</a></li>-->
-        <!--</div>-->
       </div>
     </nav>
 
     <div class="container">
       <div class="row">
-        {% for movie in movies %}
-        <div class="movie col-md-12">
-          <div class="col-md-4">
-            <div class="moviediv">
-              <a href="{{ movie['url'] }}">
-                <img src="{{ movie['image'] }}" class="img-rounded movie_image" alt="{{ movie['title'] }}">
-              </a>
-
-            </div>
-            <ul>
-              <li><b>Режиссёр: </b>{{ movie['director'] }}</li>
-              <li><b>Продолжительность: </b>{{ movie['duration'] }}</li>
-              <li><b>Дата релиза: </b>{{ movie['release'] }}</li>
-            </ul>
-          </div>
-          <div class="col-md-7">
-            <div class="row">
-              <h2><a href="{{ movie['url'] }}">{{ movie['name'] }}</a></h2>
-            </div>
-            <div class="row">
-              <ul>
-                <li><b>Жанр: </b>{{ movie['genre'] }}</li>
-                <li><b>Оценка/Голосовало: </b>{{ movie['rating'] }}<b>/</b>{{ movie['voted'] }}</li>
-              </ul>
-            </div>
-            <h3><a href="{{ movie['url'] }}">{{ movie['title'] }}</a></h3>
-            <p>{{ movie['description'] }}</p>
-            <p><b>Описание:</b></p>
-            <p>{{ movie['text'] }}</p>
-          </div>
+        <div class="col-md-8">
+            <h3>Сайт предоставляет следующие методы API:</h3>
+            <p>
+                <code>/api/list</code>
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <td>GET</td>
+                    <td>Find all movies</td>
+                </tbody>
+            </table>
+            <p>
+                <code>/api/movie/:id/</code>
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <td>GET</td>
+                    <td>Find movie by it's number</td>
+                </tbody>
+            </table>
         </div>
-        {% endfor %}
       </div>
       <div class="col-md-12 warn"><span>Настоящий сайт создан в исключительно учебных целях. Все сведения о фильмах взяты с сайта </span><a href="https://www.afisha.ru/">Афиша</a> </div>
     </div><!-- /.container -->

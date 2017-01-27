@@ -25,3 +25,30 @@
     text-align: center;
     border-radius: 5px;
 }
+
+code{
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #3F3F44;
+    background-color: #f5f5f7;
+    border-radius: 4px;
+}
+
+table{
+    width: 100%;
+    margin: 1.5em 0;
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    font-size: .8em;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table th{
+    background: #eeeeee;
+}
+
+table td, table th{
+    padding: .5em;
+    border-right: 1px solid #dedede;
+}
