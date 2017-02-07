@@ -9,7 +9,7 @@ cache = SimpleCache()
 
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 TEMPLATE_URL = "films_list.html"
-API_TEMPLATE_URL = "api_desc.html"
+API_TEMPLATE_URL = "api_description.html"
 CACHE_TIMEOUT = 12 * 60 * 60    # 12 hours timeout
 MAIN_PAGE_TIMEOUT = 60 * 30     # 30 minutes index timeout
 
@@ -49,10 +49,6 @@ def api_movie(param):
 
 @app.route("/")
 def films_list():
-    main_page = cache.get("/")
-    if main_page is not None:
-        return main_page
-    cache.delete("/")
     afisha_page = cached(AFISHA_URL)
     refs = ai.movie_refs(afisha_page)
     movies_data = []
@@ -61,7 +57,6 @@ def films_list():
         movie_page = cached(ref)
         movies_data.append(ai.parse_movie_data(movie_page))
     main_page = render_template(TEMPLATE_URL, movies=movies_data)
-    cache.add("/", main_page, MAIN_PAGE_TIMEOUT)
     return main_page
 
 if __name__ == "__main__":
