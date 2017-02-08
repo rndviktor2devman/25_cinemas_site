@@ -29,8 +29,9 @@ class Cacher():
         self.count_refs = len(refs)
         for ref in refs:
             movie_page = self.cached(ref)
-            self.callback(ref)
-            movies_data.append(ai.parse_movie_data(movie_page))
+            movie_data = ai.parse_movie_data(movie_page)
+            movies_data.append(movie_data)
+            self.callback(movie_data)
             self.cache.delete('movies_data')
             self.cache.set('movies_data', movies_data)
         print('cached found %d movies' % len(refs))
