@@ -55,19 +55,20 @@ def api_movie(param):
 
 @app.route("/")
 def films_list():
-    movies_data = []
-    cached_refs = cacher.get_refs()
-    if cached_refs is not None:
-        print('found %d movies' % len(cached_refs))
-        for ref in cached_refs:
-            movie_page = cacher.cached(ref)
-            movies_data.append(ai.parse_movie_data(movie_page))
-    else:
+    main_page = cacher.get_cached_page('/')
+    if main_page is not None:
+        return main_page
+
+    movies_data = cacher.get_movies_data()
+    main_page = render_template(TEMPLATE_URL, movies=movies_data)
+    if len(movies_data) == 0:
         print('start queue %s' % time.time())
         thread = Thread(target=cacher.cache_all_pages)
         thread.start()
         print('enqueued %s' % time.time())
-    return render_template(TEMPLATE_URL, movies=movies_data)
+    elif cacher.all_movies_cached():
+        cacher.cache_page('/', main_page, MAIN_PAGE_TIMEOUT)
+    return main_page
 
 if __name__ == "__main__":
     socketio.run(app)
