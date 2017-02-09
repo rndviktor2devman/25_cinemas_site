@@ -18,7 +18,6 @@ MAIN_PAGE_TIMEOUT = 60 * 30     # 30 minutes index timeout
 
 
 def test_connect(data):
-    print('call emit signal %s' % data)
     socketio.emit('movie_loaded', {'data': data})
 
 
