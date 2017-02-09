@@ -54,8 +54,8 @@ table td, table th{
 }
 
 .loader {
-    border: 16px solid #f0dc8a; /* Light grey */
-    border-top: 16px solid #66512c; /* Blue */
+    border: 16px solid #f0dc8a;
+    border-top: 16px solid #66512c;
     border-radius: 50%;
     width: 60px;
     height: 60px;
