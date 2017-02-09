@@ -52,3 +52,17 @@ table td, table th{
     padding: .5em;
     border-right: 1px solid #dedede;
 }
+
+.loader {
+    border: 16px solid #f0dc8a; /* Light grey */
+    border-top: 16px solid #66512c; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
