@@ -38,7 +38,7 @@ def parse_movie_data(raw_data):
         year = NO_INFO
     else:
         release = release[0:release.find('T')]
-        year = dt.datetime.strptime(release, "%Y-%M-%d").date()
+        year = dt.datetime.strptime(release, "%Y-%M-%d").date().strftime("%d.%M.%Y")
     movie['release'] = year
     movie['voted'] = raw_data.get('aggregateRating', {'ratingCount': 0})['ratingCount']
     movie['rating'] = raw_data.get('aggregateRating', {'ratingValue': 0})['ratingValue']
