@@ -1,4 +1,4 @@
-.movie{
+.movie_class{
     background-color: #f0dc8a;
     border: solid #66512c;
     border-radius: 5px;
@@ -57,9 +57,13 @@ table td, table th{
     border: 16px solid #f0dc8a;
     border-top: 16px solid #66512c;
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     animation: spin 2s linear infinite;
+}
+
+.loader.hidden {
+    visibility: hidden;
 }
 
 @keyframes spin {
