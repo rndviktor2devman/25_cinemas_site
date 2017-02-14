@@ -10,6 +10,8 @@ var MoviesList = React.createClass({
     componentDidMount(){
         socket.on('init', this._initialize);
         socket.on('movie_loaded', this._load_movie);
+        socket.on('start_loading', this._start_loading);
+        socket.on('finish_loading', this._finish_loading);
     },
 
     _initialize(data){
@@ -23,15 +25,36 @@ var MoviesList = React.createClass({
         this.setState({movies, showSpinner: true});
     },
 
+    _start_loading(){
+        var movies = this.state.movies;
+        this.setState({movies, showSpinner: true});
+    },
+
+    _finish_loading(){
+        var movies = this.state.movies;
+        this.setState({movies, showSpinner: false});
+    },
+
+    handleClick(){
+        console.log('click');
+    },
+
     render() {
         var movies = this.state.movies;
         var showSpinner = this.state.showSpinner;
         return(
             <div>
-                <div className="row">
-                    <div className={showSpinner ? 'loader' : 'loader hidden'}></div>
+                <div className="state_panel col-md-12 row">
+                    <div className="col-md-3">
+                        <div className={showSpinner ? 'loader' : 'loader hidden'}></div>
+                    </div>
+                    <div className="col-md-4">
+                        <button className="refresh_button" onClick={this.handleClick}>
+                            Refresh all items
+                        </button>
+                    </div>
                 </div>
-                <ul>
+                <ul className="list-unstyled">
                     { movies.map(function (movie) {
                         return <li>
                             <div className="movie_class col-md-12 row">

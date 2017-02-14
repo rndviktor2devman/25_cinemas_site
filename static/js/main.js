@@ -11,6 +11,8 @@ var MoviesList = React.createClass({displayName: "MoviesList",
     componentDidMount(){
         socket.on('init', this._initialize);
         socket.on('movie_loaded', this._load_movie);
+        socket.on('start_loading', this._start_loading);
+        socket.on('finish_loading', this._finish_loading);
     },
 
     _initialize(data){
@@ -24,15 +26,36 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         this.setState({movies, showSpinner: true});
     },
 
+    _start_loading(){
+        var movies = this.state.movies;
+        this.setState({movies, showSpinner: true});
+    },
+
+    _finish_loading(){
+        var movies = this.state.movies;
+        this.setState({movies, showSpinner: false});
+    },
+
+    handleClick(){
+        console.log('click');
+    },
+
     render() {
         var movies = this.state.movies;
         var showSpinner = this.state.showSpinner;
         return(
             React.createElement("div", null, 
-                React.createElement("div", {className: "row"}, 
-                    React.createElement("div", {className: showSpinner ? 'loader' : 'loader hidden'})
+                React.createElement("div", {className: "state_panel col-md-12 row"}, 
+                    React.createElement("div", {className: "col-md-3"}, 
+                        React.createElement("div", {className: showSpinner ? 'loader' : 'loader hidden'})
+                    ), 
+                    React.createElement("div", {className: "col-md-4"}, 
+                        React.createElement("button", {className: "refresh_button", onClick: this.handleClick}, 
+                            "Refresh all items"
+                        )
+                    )
                 ), 
-                React.createElement("ul", null, 
+                React.createElement("ul", {className: "list-unstyled"}, 
                      movies.map(function (movie) {
                         return React.createElement("li", null, 
                             React.createElement("div", {className: "movie_class col-md-12 row"}, 

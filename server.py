@@ -14,14 +14,17 @@ socketio = SocketIO(app)
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 TEMPLATE_URL = "films_list.html"
 API_TEMPLATE_URL = "api_description.html"
-MAIN_PAGE_TIMEOUT = 60 * 30     # 30 minutes index timeout
 
 
-def test_connect(data):
+def load_movie_callback(data):
     socketio.emit('movie_loaded', {'data': data})
 
 
-cacher = Cacher(test_connect)
+def loading_finish():
+    socketio.emit('finish_loading', {'data': 'data'})
+
+
+cacher = Cacher(load_movie_callback, loading_finish)
 
 
 @socketio.on('my event')
@@ -61,12 +64,11 @@ def films_list():
     movies_data = cacher.get_movies_data()
     main_page = render_template(TEMPLATE_URL, movies=movies_data)
     if len(movies_data) == 0:
+        socketio.emit('start_loading')
         print('start queue %s' % time.time())
         thread = Thread(target=cacher.cache_all_pages)
         thread.start()
         print('enqueued %s' % time.time())
-    elif cacher.all_movies_cached():
-        cacher.cache_page('/', main_page, MAIN_PAGE_TIMEOUT)
     return main_page
 
 if __name__ == "__main__":

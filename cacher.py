@@ -7,10 +7,12 @@ CACHE_TIMEOUT = 12 * 60 * 60  # 12 hours timeout
 
 
 class Cacher():
-    def __init__(self, callback):
+    def __init__(self, callback, finish_callback):
         self.cache = SimpleCache()
         self.callback = callback
+        self.finish = finish_callback
         self.count_refs = -1
+        self.caching_pending = False
 
     def cached(self, url, timeout=CACHE_TIMEOUT):
         cached_page = self.cache.get(url)
@@ -34,6 +36,8 @@ class Cacher():
             self.callback(movie_data)
             self.cache.delete('movies_data')
             self.cache.set('movies_data', movies_data)
+        self.caching_pending = False
+        self.finish()
         print('cached found %d movies' % len(refs))
 
     def get_movies_data(self):
@@ -44,10 +48,6 @@ class Cacher():
 
     def all_movies_cached(self):
         return self.count_refs == len(self.get_movies_data())
-
-    def cache_page(self, url, page, timeout=CACHE_TIMEOUT):
-        self.cache.delete(url)
-        self.cache.set(url, page, timeout)
 
     def get_cached_page(self, url):
         return self.cache.get(url)
