@@ -26,6 +26,12 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         this.setState({movies, showSpinner: true});
     },
 
+    _load_movies_group(new_movies){
+        var movies = this.state.movies;
+        movies = movies.concat(new_movies);
+        this.setState({movies, showSpinner: true});
+    },
+
     _start_loading(){
         var movies = this.state.movies;
         this.setState({movies, showSpinner: true});
@@ -46,12 +52,11 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         return(
             React.createElement("div", null, 
                 React.createElement("div", {className: "state_panel col-md-12 row"}, 
-                    React.createElement("div", {className: "col-md-3"}, 
-                        React.createElement("div", {className: showSpinner ? 'loader' : 'loader hidden'})
-                    ), 
+                    /*<div className="col-md-3">*/
+                        /*<div className={showSpinner ? 'loader' : 'loader hidden'}></div>*/
+                    /*</div>*/
                     React.createElement("div", {className: "col-md-4"}, 
-                        React.createElement("button", {className: "refresh_button", onClick: this.handleClick}, 
-                            "Refresh all items"
+                        React.createElement("i", {className: showSpinner ? 'fa fa-refresh fa-spin fa-3x fa-fw' : 'fa fa-refresh fa-3x fa-fw', onClick: this.handleClick}
                         )
                     )
                 ), 
