@@ -24,19 +24,19 @@ def loading_finish():
     socketio.emit('finish_loading')
 
 
-@socketio.on('ping')
+@socketio.on('ping_action')
 def ping_by_timeout():
-    if cacher.cache_is_clean():
-        start_queue()
+    if cacher.afisha_timed_out():
+        print('renew cache')
+        thread = Thread(target=cacher.renew_cache)
+        thread.start()
 
 
 @socketio.on('on_startup')
 def get_cached_movies():
-    print('retrieve at startup')
     movies = cacher.get_movies_data()
     loading = cacher.caching_pending
     count = cacher.count_refs
-    print('retrieve at startup finish')
     socketio.emit('startup_cache', {'movies': movies, 'loading': loading, 'count': count})
 
 
@@ -49,14 +49,9 @@ def clean_cache():
 
 
 def start_queue():
-    if cacher.needs_cache():
-        socketio.emit('start_loading')
-        print('start queue %s' % time.time())
+    if cacher.caching_available():
         thread = Thread(target=cacher.cache_all_pages)
         thread.start()
-        print('enqueued %s' % time.time())
-    else:
-        print('request is dropped')
 
 
 cacher = Cacher(load_movie_callback, loading_finish)

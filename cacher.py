@@ -4,7 +4,7 @@ from werkzeug.contrib.cache import SimpleCache
 
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 CACHE_TIMEOUT = 12 * 60 * 60  # 12 hours timeout
-MOVIES_SET_TIMEOUT = 30  # 30 secs timeout
+AFISHA_TIMEOUT = 60 * 60  # 1 hour timeout
 MOVIES_SET = 'movies_data'
 
 
@@ -13,7 +13,7 @@ class Cacher():
         self.cache = SimpleCache()
         self.callback = callback
         self.finish = finish_callback
-        self.count_refs = -1
+        self.count_refs = 0
         self.caching_pending = False
 
     def cached(self, url, timeout=CACHE_TIMEOUT):
@@ -25,9 +25,9 @@ class Cacher():
         self.cache.add(url, page, timeout=timeout)
         return page.content
 
-    def cache_all_pages(self):
+    def cache_all_pages(self, old_cache=[]):
         self.caching_pending = True
-        afisha_page = self.cached(AFISHA_URL)
+        afisha_page = self.cached(AFISHA_URL, AFISHA_TIMEOUT)
         refs = ai.movie_refs(afisha_page)
         movies_data = []
         self.count_refs = len(refs)
@@ -35,12 +35,21 @@ class Cacher():
             movie_page = self.cached(ref)
             movie_data = ai.parse_movie_data(movie_page)
             movies_data.append(movie_data)
-            self.callback(movie_data, self.count_refs)
+            if movie_data not in old_cache:
+                self.callback(movie_data, self.count_refs)
             self.cache.delete(MOVIES_SET)
-            self.cache.set(MOVIES_SET, movies_data, MOVIES_SET_TIMEOUT)
+            self.cache.set(MOVIES_SET, movies_data, CACHE_TIMEOUT)
         self.caching_pending = False
         self.finish()
         print('cached found %d movies' % len(refs))
+
+    def renew_cache(self):
+        old_cache = self.cache.get(MOVIES_SET)
+        self.cache_all_pages(old_cache)
+
+    def afisha_timed_out(self):
+        afisha = self.cache.get(AFISHA_URL)
+        return afisha is None
 
     def get_movies_data(self):
         data = []
@@ -51,16 +60,5 @@ class Cacher():
     def clean_cache(self):
         self.cache.delete(AFISHA_URL)
 
-    def needs_cache(self):
-        cached_movies = self.cache.get(MOVIES_SET)
-        print(cached_movies)
-        return cached_movies is None and not self.caching_pending
-
-    def cache_is_clean(self):
-        return self.count_refs == 0
-
-    def all_movies_cached(self):
-        return self.count_refs == len(self.get_movies_data())
-
-    def get_cached_page(self, url):
-        return self.cache.get(url)
+    def caching_available(self):
+        return not self.caching_pending

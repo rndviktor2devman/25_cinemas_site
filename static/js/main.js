@@ -15,6 +15,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         socket.on('finish_loading', this._finish_loading);
         socket.on('clean_movies', this._clean_movies);
         socket.on('startup_cache', this._load_movies);
+        setInterval(this._ping_server, 60000)
     },
 
     _clean_movies(){
@@ -31,6 +32,10 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         var loading = movies_data.loading;
         var count = movies_data.count;
         this.setState({movies, showSpinner: loading, allMovies: count});
+    },
+
+    _ping_server(){
+        socket.emit('ping_action')
     },
 
     _load_movie(movie){
