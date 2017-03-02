@@ -1,6 +1,6 @@
 # Cinemas Site
 
-This Project fetches some information from [site](http://www.afisha.ru) and provides it in short form (see example [here](https://nameless-everglades-11545.herokuapp.com/))
+This Project fetches some information from [site](http://www.afisha.ru) and provides it in short form (see example [here](https://radiant-depths-66254.herokuapp.com/))
 
 # Project Goals
 
