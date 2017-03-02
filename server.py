@@ -24,12 +24,6 @@ def loading_finish():
     socketio.emit('finish_loading')
 
 
-def check_cache():
-    socketio.emit('start_loading')
-    thread = Thread(target=cacher.cache_all_pages)
-    thread.start()
-
-
 @socketio.on('ping')
 def ping_by_timeout():
     if cacher.cache_is_clean():
@@ -51,6 +45,7 @@ def clean_cache():
     socketio.emit('clean_movies')
     print('clean cache')
     cacher.clean_cache()
+    start_queue()
 
 
 def start_queue():

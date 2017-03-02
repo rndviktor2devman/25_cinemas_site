@@ -31,7 +31,6 @@ class Cacher():
         refs = ai.movie_refs(afisha_page)
         movies_data = []
         self.count_refs = len(refs)
-        print('found %d movies' % self.count_refs)
         for ref in refs:
             movie_page = self.cached(ref)
             movie_data = ai.parse_movie_data(movie_page)
