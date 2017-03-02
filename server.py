@@ -36,6 +36,16 @@ def ping_by_timeout():
         start_queue()
 
 
+@socketio.on('on_startup')
+def get_cached_movies():
+    print('retrieve at startup')
+    movies = cacher.get_movies_data()
+    loading = cacher.caching_pending
+    count = cacher.count_refs
+    print('retrieve at startup finish')
+    socketio.emit('startup_cache', {'movies': movies, 'loading': loading, 'count': count})
+
+
 @socketio.on('trigger_clean_movies')
 def clean_cache():
     socketio.emit('clean_movies')
@@ -55,11 +65,6 @@ def start_queue():
 
 
 cacher = Cacher(load_movie_callback, loading_finish)
-
-
-@socketio.on('my event')
-def handle_my_custom_event(json):
-    print('received json: ' + str(json))
 
 
 @app.route('/api')

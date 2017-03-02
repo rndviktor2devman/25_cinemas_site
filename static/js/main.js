@@ -10,10 +10,11 @@ var MoviesList = React.createClass({displayName: "MoviesList",
     },
 
     componentDidMount(){
-        socket.on('init', this._initialize);
+        socket.on('connect', this._initialize);
         socket.on('movie_loaded', this._load_movie);
         socket.on('finish_loading', this._finish_loading);
         socket.on('clean_movies', this._clean_movies);
+        socket.on('startup_cache', this._load_movies);
     },
 
     _clean_movies(){
@@ -21,9 +22,15 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         this.setState({movies, showSpinner: true});
     },
 
-    _initialize(data){
-        var {movies, show} = data;
-        this.setState({movies, showSpinner: show});
+    _initialize(){
+        socket.emit('on_startup')
+    },
+
+    _load_movies(movies_data){
+        var movies = movies_data.movies;
+        var loading = movies_data.loading;
+        var count = movies_data.count;
+        this.setState({movies, showSpinner: loading, allMovies: count});
     },
 
     _load_movie(movie){
