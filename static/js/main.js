@@ -4,15 +4,21 @@ var MoviesList = React.createClass({displayName: "MoviesList",
     getInitialState() {
         return {
             movies: [],
-            showSpinner: false
+            showSpinner: false,
+            allMovies: 0,
         };
     },
 
     componentDidMount(){
         socket.on('init', this._initialize);
         socket.on('movie_loaded', this._load_movie);
-        socket.on('start_loading', this._start_loading);
         socket.on('finish_loading', this._finish_loading);
+        socket.on('clean_movies', this._clean_movies);
+    },
+
+    _clean_movies(){
+        var movies = [];
+        this.setState({movies, showSpinner: true});
     },
 
     _initialize(data){
@@ -22,19 +28,9 @@ var MoviesList = React.createClass({displayName: "MoviesList",
 
     _load_movie(movie){
         var movies = this.state.movies;
+        var moviesCount = movie.count;
         movies.push(movie.data);
-        this.setState({movies, showSpinner: true});
-    },
-
-    _load_movies_group(new_movies){
-        var movies = this.state.movies;
-        movies = movies.concat(new_movies);
-        this.setState({movies, showSpinner: true});
-    },
-
-    _start_loading(){
-        var movies = this.state.movies;
-        this.setState({movies, showSpinner: true});
+        this.setState({movies, showSpinner: true, allMovies: moviesCount});
     },
 
     _finish_loading(){
@@ -44,20 +40,22 @@ var MoviesList = React.createClass({displayName: "MoviesList",
 
     handleClick(){
         console.log('click');
+        socket.emit('trigger_clean_movies');
     },
 
     render() {
         var movies = this.state.movies;
         var showSpinner = this.state.showSpinner;
+        var allMovies = this.state.allMovies;
         return(
             React.createElement("div", null, 
                 React.createElement("div", {className: "state_panel col-md-12 row"}, 
-                    /*<div className="col-md-3">*/
-                        /*<div className={showSpinner ? 'loader' : 'loader hidden'}></div>*/
-                    /*</div>*/
                     React.createElement("div", {className: "col-md-4"}, 
                         React.createElement("i", {className: showSpinner ? 'fa fa-refresh fa-spin fa-3x fa-fw' : 'fa fa-refresh fa-3x fa-fw', onClick: this.handleClick}
                         )
+                    ), 
+                    React.createElement("div", {className: "col-md-7"}, 
+                        React.createElement("h4", null, "Загружено ", movies.length, "/", allMovies, " описаний")
                     )
                 ), 
                 React.createElement("ul", {className: "list-unstyled"}, 

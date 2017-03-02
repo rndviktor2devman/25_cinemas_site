@@ -16,12 +16,42 @@ TEMPLATE_URL = "films_list.html"
 API_TEMPLATE_URL = "api_description.html"
 
 
-def load_movie_callback(data):
-    socketio.emit('movie_loaded', {'data': data})
+def load_movie_callback(data, count):
+    socketio.emit('movie_loaded', {'data': data, 'count': count})
 
 
 def loading_finish():
-    socketio.emit('finish_loading', {'data': 'data'})
+    socketio.emit('finish_loading')
+
+
+def check_cache():
+    socketio.emit('start_loading')
+    thread = Thread(target=cacher.cache_all_pages)
+    thread.start()
+
+
+@socketio.on('ping')
+def ping_by_timeout():
+    if cacher.cache_is_clean():
+        start_queue()
+
+
+@socketio.on('trigger_clean_movies')
+def clean_cache():
+    socketio.emit('clean_movies')
+    print('clean cache')
+    cacher.clean_cache()
+
+
+def start_queue():
+    if cacher.needs_cache():
+        socketio.emit('start_loading')
+        print('start queue %s' % time.time())
+        thread = Thread(target=cacher.cache_all_pages)
+        thread.start()
+        print('enqueued %s' % time.time())
+    else:
+        print('request is dropped')
 
 
 cacher = Cacher(load_movie_callback, loading_finish)
@@ -57,18 +87,8 @@ def api_movie(param):
 
 @app.route("/")
 def films_list():
-    main_page = cacher.get_cached_page('/')
-    if main_page is not None:
-        return main_page
-
-    movies_data = cacher.get_movies_data()
-    main_page = render_template(TEMPLATE_URL, movies=movies_data)
-    if len(movies_data) == 0:
-        socketio.emit('start_loading')
-        print('start queue %s' % time.time())
-        thread = Thread(target=cacher.cache_all_pages)
-        thread.start()
-        print('enqueued %s' % time.time())
+    main_page = render_template(TEMPLATE_URL)
+    start_queue()
     return main_page
 
 if __name__ == "__main__":
