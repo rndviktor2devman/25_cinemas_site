@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io.connect('https://' + document.domain + ':' + location.port);
 var MoviesList = React.createClass({displayName: "MoviesList",
     getInitialState() {
         return {
@@ -62,11 +62,11 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         return(
             React.createElement("div", null, 
                 React.createElement("div", {className: "state_panel col-md-12 row"}, 
-                    React.createElement("div", {className: "col-md-4"}, 
+                    React.createElement("div", {className: "col-xs-4"}, 
                         React.createElement("i", {className: showSpinner ? 'fa fa-refresh fa-spin fa-3x fa-fw' : 'fa fa-refresh fa-3x fa-fw', onClick: this.handleClick}
                         )
                     ), 
-                    React.createElement("div", {className: "col-md-7"}, 
+                    React.createElement("div", {className: "col-xs-7"}, 
                         React.createElement("h4", null, "Загружено ", movies.length, "/", allMovies, " описаний")
                     )
                 ), 
@@ -74,7 +74,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
                      movies.map(function (movie) {
                         return React.createElement("li", null, 
                             React.createElement("div", {className: "movie_class col-md-12 row"}, 
-                                React.createElement("div", {className: "col-md-4"}, 
+                                React.createElement("div", {className: "col-xs-4"}, 
                                     React.createElement("div", {className: "moviediv"}, 
                                         React.createElement("a", {href:  movie.url}, 
                                             React.createElement("img", {src:  movie.image, className: "img-rounded movie_image", alt:  movie.title})
@@ -86,7 +86,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
                                         React.createElement("li", null, React.createElement("b", null, "Дата релиза: "),  movie.release)
                                     )
                                 ), 
-                                React.createElement("div", {className: "col-md-7"}, 
+                                React.createElement("div", {className: "col-xs-7"}, 
                                     React.createElement("div", {className: "row"}, 
                                         React.createElement("h2", null, React.createElement("a", {href:  movie.url},  movie.name))
                                     ), 

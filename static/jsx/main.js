@@ -1,4 +1,4 @@
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io.connect('https://' + document.domain + ':' + location.port);
 var MoviesList = React.createClass({
     getInitialState() {
         return {
@@ -61,11 +61,11 @@ var MoviesList = React.createClass({
         return(
             <div>
                 <div className="state_panel col-md-12 row">
-                    <div className="col-md-4">
+                    <div className="col-xs-4">
                         <i className={showSpinner ? 'fa fa-refresh fa-spin fa-3x fa-fw' : 'fa fa-refresh fa-3x fa-fw'} onClick={this.handleClick}>
                         </i>
                     </div>
-                    <div className="col-md-7">
+                    <div className="col-xs-7">
                         <h4>Загружено {movies.length}/{allMovies} описаний</h4>
                     </div>
                 </div>
@@ -73,7 +73,7 @@ var MoviesList = React.createClass({
                     { movies.map(function (movie) {
                         return <li>
                             <div className="movie_class col-md-12 row">
-                                <div className="col-md-4">
+                                <div className="col-xs-4">
                                     <div className="moviediv">
                                         <a href={ movie.url }>
                                             <img src={ movie.image } className="img-rounded movie_image" alt={ movie.title }/>
@@ -85,7 +85,7 @@ var MoviesList = React.createClass({
                                         <li><b>Дата релиза: </b>{ movie.release }</li>
                                     </ul>
                                 </div>
-                                <div className="col-md-7">
+                                <div className="col-xs-7">
                                     <div className="row">
                                         <h2><a href={ movie.url }>{ movie.name }</a></h2>
                                     </div>
