@@ -37,7 +37,7 @@ class Cacher():
             movie_page = self.cached(ref)
             movie_data = ai.parse_movie_data(movie_page)
             movies_data.append(movie_data)
-            if movie_data not in old_cache:
+            if old_cache is None or movie_data not in old_cache:
                 self.callback(movie_data, self.count_refs)
             self.cache.delete(MOVIES_SET)
             self.cache.set(MOVIES_SET, movies_data, CACHE_TIMEOUT)
