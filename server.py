@@ -45,6 +45,7 @@ def clean_cache():
     socketio.emit('clean_movies')
     cacher.clean_cache()
     start_queue()
+    return json.dumps({'status': 'ok'})
 
 
 def start_queue():
