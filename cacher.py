@@ -33,7 +33,6 @@ class Cacher():
         self.count_refs = len(refs)
         for ref in refs:
             if 'http:https:' in ref:
-                print('we need replace')
                 ref = ref.replace('http:', '')
             movie_page = self.cached(ref)
             movie_data = ai.parse_movie_data(movie_page)
@@ -44,7 +43,6 @@ class Cacher():
             self.cache.set(MOVIES_SET, movies_data, CACHE_TIMEOUT)
         self.caching_pending = False
         self.finish()
-        print('cached found %d movies' % len(refs))
 
     def renew_cache(self):
         old_cache = self.cache.get(MOVIES_SET)
