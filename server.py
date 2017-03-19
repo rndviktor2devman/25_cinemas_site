@@ -17,6 +17,7 @@ API_TEMPLATE_URL = "api_description.html"
 
 
 def load_movie_callback(data, count):
+    print('movie loaded')
     socketio.emit('movie_loaded', {'data': data, 'count': count})
 
 
@@ -32,12 +33,18 @@ def ping_by_timeout():
         thread.start()
 
 
-@socketio.on('on_startup')
+@app.route('/on_startup', methods=['POST'])
 def get_cached_movies():
+    print('startup loading')
     movies = cacher.get_movies_data()
     loading = cacher.caching_pending
     count = cacher.count_refs
-    socketio.emit('startup_cache', {'movies': movies, 'loading': loading, 'count': count})
+    data = {
+        'movies': movies,
+        'loading': loading,
+        'count': count
+    }
+    return json.dumps({'status': 'ok', 'data': data})
 
 
 @app.route('/renew_cache', methods=['POST'])

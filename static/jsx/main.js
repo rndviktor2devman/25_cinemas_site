@@ -1,4 +1,4 @@
-var socket = io.connect('https://' + document.domain + ':' + location.port);
+var socket = io.connect('http://' + document.domain + ':' + location.port);
 var MoviesList = React.createClass({
     getInitialState() {
         return {
@@ -13,7 +13,8 @@ var MoviesList = React.createClass({
         socket.on('movie_loaded', this._load_movie);
         socket.on('finish_loading', this._finish_loading);
         socket.on('clean_movies', this._clean_movies);
-        socket.on('startup_cache', this._load_movies);
+        setTimeout(this._start_with_pause, 5000);
+        setInterval(this._ping_server, 60000);
     },
 
     _clean_movies(){
@@ -22,14 +23,32 @@ var MoviesList = React.createClass({
     },
 
     _initialize(){
-        socket.emit('on_startup')
+        this.setState({showSpinner: true});
     },
 
-    _load_movies(movies_data){
-        var movies = movies_data.movies;
-        var loading = movies_data.loading;
-        var count = movies_data.count;
-        this.setState({movies, showSpinner: loading, allMovies: count});
+    _start_with_pause(){
+        var sendUrl = document.URL + 'on_startup';
+        $.ajax({
+          url: sendUrl,
+          type: 'POST',
+          data: JSON.stringify(this.state),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(data) {
+              var json = $.parseJSON(data);
+              this.setState({
+                  movies: json.data.movies,
+                  allMovies: json.data.count,
+                  showSpinner: json.data.loading,
+              });
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+          }.bind(this)
+        });
+    },
+
+    _ping_server(){
+        socket.emit('ping_action')
     },
 
     _load_movie(movie){
@@ -40,12 +59,10 @@ var MoviesList = React.createClass({
     },
 
     _finish_loading(){
-        var movies = this.state.movies;
-        this.setState({movies, showSpinner: false});
+        this.setState({showSpinner: false});
     },
 
     handleClick(){
-        console.log('click');
         var sendUrl = document.URL + 'renew_cache';
         $.ajax({
           url: sendUrl,
