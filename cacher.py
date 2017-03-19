@@ -32,6 +32,9 @@ class Cacher():
         movies_data = []
         self.count_refs = len(refs)
         for ref in refs:
+            if 'http:https:' in ref:
+                print('we need replace')
+                ref = ref.replace('http:', '')
             movie_page = self.cached(ref)
             movie_data = ai.parse_movie_data(movie_page)
             movies_data.append(movie_data)
