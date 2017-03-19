@@ -34,10 +34,6 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         this.setState({movies, showSpinner: loading, allMovies: count});
     },
 
-    _ping_server(){
-        socket.emit('ping_action')
-    },
-
     _load_movie(movie){
         var movies = this.state.movies;
         var moviesCount = movie.count;
@@ -52,7 +48,19 @@ var MoviesList = React.createClass({displayName: "MoviesList",
 
     handleClick(){
         console.log('click');
-        socket.emit('trigger_clean_movies');
+        var sendUrl = document.URL + 'renew_cache';
+        $.ajax({
+          url: sendUrl,
+          type: 'POST',
+          data: JSON.stringify(this.state),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(data) {
+              this.setState({showSpinner: true});
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+          }.bind(this)
+        });
     },
 
     render() {

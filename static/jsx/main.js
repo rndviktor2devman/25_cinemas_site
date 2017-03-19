@@ -14,7 +14,6 @@ var MoviesList = React.createClass({
         socket.on('finish_loading', this._finish_loading);
         socket.on('clean_movies', this._clean_movies);
         socket.on('startup_cache', this._load_movies);
-        setInterval(this._ping_server, 60000)
     },
 
     _clean_movies(){
@@ -33,10 +32,6 @@ var MoviesList = React.createClass({
         this.setState({movies, showSpinner: loading, allMovies: count});
     },
 
-    _ping_server(){
-        socket.emit('ping_action')
-    },
-
     _load_movie(movie){
         var movies = this.state.movies;
         var moviesCount = movie.count;
@@ -51,7 +46,19 @@ var MoviesList = React.createClass({
 
     handleClick(){
         console.log('click');
-        socket.emit('trigger_clean_movies');
+        var sendUrl = document.URL + 'renew_cache';
+        $.ajax({
+          url: sendUrl,
+          type: 'POST',
+          data: JSON.stringify(this.state),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(data) {
+              this.setState({showSpinner: true});
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+          }.bind(this)
+        });
     },
 
     render() {

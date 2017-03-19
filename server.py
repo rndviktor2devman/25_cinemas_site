@@ -40,10 +40,9 @@ def get_cached_movies():
     socketio.emit('startup_cache', {'movies': movies, 'loading': loading, 'count': count})
 
 
-@socketio.on('trigger_clean_movies')
+@app.route('/renew_cache', methods=['POST'])
 def clean_cache():
     socketio.emit('clean_movies')
-    print('clean cache')
     cacher.clean_cache()
     start_queue()
 
