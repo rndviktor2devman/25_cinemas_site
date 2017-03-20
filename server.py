@@ -17,7 +17,6 @@ API_TEMPLATE_URL = "api_description.html"
 
 
 def load_movie_callback(data, count):
-    print('movie loaded')
     socketio.emit('movie_loaded', {'data': data, 'count': count})
 
 
@@ -28,14 +27,12 @@ def loading_finish():
 @socketio.on('ping_action')
 def ping_by_timeout():
     if cacher.afisha_timed_out():
-        print('renew cache')
         thread = Thread(target=cacher.renew_cache)
         thread.start()
 
 
 @app.route('/on_startup', methods=['POST'])
 def get_cached_movies():
-    print('startup loading')
     movies = cacher.get_movies_data()
     loading = cacher.caching_pending
     count = cacher.count_refs
