@@ -9,12 +9,10 @@ MOVIES_SET = 'movies_data'
 
 
 class Cacher():
-    def __init__(self, callback, finish_callback):
+    def __init__(self):
         self.cache = SimpleCache()
-        self.callback = callback
-        self.finish = finish_callback
         self.count_refs = 0
-        self.caching_pending = False
+        self.cached_refs = 0
 
     def cached(self, url, timeout=CACHE_TIMEOUT):
         cached_page = self.cache.get(url)
@@ -25,24 +23,21 @@ class Cacher():
         self.cache.add(url, page, timeout=timeout)
         return page.content
 
-    def cache_all_pages(self, old_cache=[]):
-        self.caching_pending = True
+    def cache_all_pages(self):
         afisha_page = self.cached(AFISHA_URL, AFISHA_TIMEOUT)
         refs = ai.movie_refs(afisha_page)
         movies_data = []
         self.count_refs = len(refs)
+        self.cached_refs = 0
         for ref in refs:
             if 'http:https:' in ref:
                 ref = ref.replace('http:', '')
             movie_page = self.cached(ref)
             movie_data = ai.parse_movie_data(movie_page)
             movies_data.append(movie_data)
-            if old_cache is None or movie_data not in old_cache:
-                self.callback(movie_data, self.count_refs)
             self.cache.delete(MOVIES_SET)
             self.cache.set(MOVIES_SET, movies_data, CACHE_TIMEOUT)
-        self.caching_pending = False
-        self.finish()
+            self.cached_refs += 1
 
     def renew_cache(self):
         old_cache = self.cache.get(MOVIES_SET)
@@ -62,4 +57,4 @@ class Cacher():
         self.cache.delete(AFISHA_URL)
 
     def caching_available(self):
-        return not self.caching_pending
+        return self.cached_refs == self.count_refs

@@ -1,5 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var socket = io.connect('https://' + document.domain + ':' + location.port);
 var MoviesList = React.createClass({displayName: "MoviesList",
     getInitialState() {
         return {
@@ -10,12 +9,8 @@ var MoviesList = React.createClass({displayName: "MoviesList",
     },
 
     componentDidMount(){
-        socket.on('connect', this._initialize);
-        socket.on('movie_loaded', this._load_movie);
-        socket.on('finish_loading', this._finish_loading);
-        socket.on('clean_movies', this._clean_movies);
-        setTimeout(this._start_with_pause, 5000);
-        setInterval(this._ping_server, 60000);
+        setInterval(this._ping_server, 5000);
+        setInterval(this._check_movies_list, 1000);
     },
 
     _clean_movies(){
@@ -23,24 +18,19 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         this.setState({movies, showSpinner: true});
     },
 
-    _initialize(){
-        this.setState({showSpinner: true});
-    },
-
-    _start_with_pause(){
-        var sendUrl = document.URL + 'on_startup';
+    _ping_server(){
+        var sendUrl = document.URL + 'ping';
         $.ajax({
           url: sendUrl,
-          type: 'POST',
-          data: JSON.stringify(this.state),
-          contentType: 'application/json;charset=UTF-8',
+          dataType: 'json',
+          cache: false,
           success: function(data) {
-              var json = $.parseJSON(data);
-              this.setState({
-                  movies: json.data.movies,
-                  allMovies: json.data.count,
-                  showSpinner: json.data.loading,
-              });
+              var movies_count = this.state.movies.length;
+              var server_movies = data.data.count;
+              if(server_movies < movies_count){
+                  this._clean_movies();
+              }
+              this.setState({showSpinner:(movies_count < server_movies), allMovies: server_movies});
           }.bind(this),
           error: function(xhr, status, err) {
             console.error(this.props.url, status, err.toString());
@@ -48,19 +38,30 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         });
     },
 
-    _ping_server(){
-        socket.emit('ping_action')
-    },
-
-    _load_movie(movie){
+    _check_movies_list(){
         var movies = this.state.movies;
-        var moviesCount = movie.count;
-        movies.push(movie.data);
-        this.setState({movies, showSpinner: true, allMovies: moviesCount});
-    },
-
-    _finish_loading(){
-        this.setState({showSpinner: false});
+        if(movies.length < this.state.allMovies)
+        {
+            var sendUrl = document.URL + 'get_movies';
+            var urls = movies.map(function(movie) {
+                return movie.url;
+            });
+            $.ajax({
+              url: sendUrl,
+              type: 'POST',
+              data: JSON.stringify(urls),
+              contentType: 'application/json;charset=UTF-8',
+              success: function(data) {
+                  var json = $.parseJSON(data);
+                  this.setState({
+                      movies: json.data.movies,
+                  });
+              }.bind(this),
+              error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+              }.bind(this)
+            });
+        }
     },
 
     handleClick(){
@@ -71,7 +72,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
           data: JSON.stringify(this.state),
           contentType: 'application/json;charset=UTF-8',
           success: function(data) {
-              this.setState({showSpinner: true});
+              this._clean_movies();
           }.bind(this),
           error: function(xhr, status, err) {
             console.error(this.props.url, status, err.toString());

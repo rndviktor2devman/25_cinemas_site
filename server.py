@@ -1,34 +1,39 @@
 from flask import Flask, render_template, json, Response
 from cacher import Cacher
 import afisha_interaction as ai
-import time
 from threading import Thread
-from flask_socketio import SocketIO, emit
 
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
 
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 TEMPLATE_URL = "films_list.html"
 API_TEMPLATE_URL = "api_description.html"
 
 
-def load_movie_callback(data, count):
-    socketio.emit('movie_loaded', {'data': data, 'count': count})
-
-
-def loading_finish():
-    socketio.emit('finish_loading')
-
-
-@socketio.on('ping_action')
+@app.route('/ping', methods=['GET'])
 def ping_by_timeout():
     if cacher.afisha_timed_out():
         thread = Thread(target=cacher.renew_cache)
         thread.start()
+    data = {
+        'count': cacher.count_refs
+    }
+    return json.dumps({'status': 'ok', 'data': data})
+
+
+@app.route('/get_movies', methods=['POST'])
+def get_movies_from_cache(client_movies = None):
+    if client_movies is not None:
+        print(client_movies)
+
+    movies = cacher.get_movies_data()
+
+    data = {
+        'movies': movies
+    }
+    return json.dumps({'status': 'ok', 'data': data})
 
 
 @app.route('/on_startup', methods=['POST'])
@@ -46,7 +51,6 @@ def get_cached_movies():
 
 @app.route('/renew_cache', methods=['POST'])
 def clean_cache():
-    socketio.emit('clean_movies')
     cacher.clean_cache()
     start_queue()
     return json.dumps({'status': 'ok'})
@@ -58,7 +62,7 @@ def start_queue():
         thread.start()
 
 
-cacher = Cacher(load_movie_callback, loading_finish)
+cacher = Cacher()
 
 
 @app.route('/api')
@@ -91,4 +95,4 @@ def films_list():
     return main_page
 
 if __name__ == "__main__":
-    socketio.run(app)
+    app.run()
