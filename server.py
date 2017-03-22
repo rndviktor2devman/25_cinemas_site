@@ -51,9 +51,12 @@ def get_cached_movies():
 
 @app.route('/renew_cache', methods=['POST'])
 def clean_cache():
-    cacher.clean_cache()
-    start_queue()
-    return json.dumps({'status': 'ok'})
+    if cacher.caching_available():
+        cacher.clean_cache()
+        start_queue()
+        return json.dumps({'status': 'ok', 'data': 'dropped'})
+    else:
+        return json.dumps({'status': 'ok', 'data': 'forbid'})
 
 
 def start_queue():

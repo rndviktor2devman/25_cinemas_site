@@ -72,7 +72,12 @@ var MoviesList = React.createClass({displayName: "MoviesList",
           data: JSON.stringify(this.state),
           contentType: 'application/json;charset=UTF-8',
           success: function(data) {
-              this._clean_movies();
+              var json = $.parseJSON(data);
+              if(json.data==='dropped') {
+                  this._clean_movies();
+              } else {
+                  console.log('forbidden dropping cache');
+              }
           }.bind(this),
           error: function(xhr, status, err) {
             console.error(this.props.url, status, err.toString());
