@@ -23,28 +23,12 @@ def ping_by_timeout():
     return json.dumps({'status': 'ok', 'data': data})
 
 
-@app.route('/get_movies', methods=['POST'])
-def get_movies_from_cache(client_movies = None):
-    if client_movies is not None:
-        print(client_movies)
-
+@app.route('/get_movies', methods=['GET'])
+def get_movies_from_cache():
     movies = cacher.get_movies_data()
 
     data = {
         'movies': movies
-    }
-    return json.dumps({'status': 'ok', 'data': data})
-
-
-@app.route('/on_startup', methods=['POST'])
-def get_cached_movies():
-    movies = cacher.get_movies_data()
-    loading = cacher.caching_pending
-    count = cacher.count_refs
-    data = {
-        'movies': movies,
-        'loading': loading,
-        'count': count
     }
     return json.dumps({'status': 'ok', 'data': data})
 

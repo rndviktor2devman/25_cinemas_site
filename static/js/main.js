@@ -9,8 +9,8 @@ var MoviesList = React.createClass({displayName: "MoviesList",
     },
 
     componentDidMount(){
-        setInterval(this._ping_server, 5000);
-        setInterval(this._check_movies_list, 1000);
+        setInterval(this._ping_server, 1000);
+        setInterval(this._check_movies_list, 1500);
     },
 
     _clean_movies(){
@@ -43,13 +43,9 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         if(movies.length < this.state.allMovies)
         {
             var sendUrl = document.URL + 'get_movies';
-            var urls = movies.map(function(movie) {
-                return movie.url;
-            });
             $.ajax({
               url: sendUrl,
-              type: 'POST',
-              data: JSON.stringify(urls),
+              type: 'GET',
               contentType: 'application/json;charset=UTF-8',
               success: function(data) {
                   var json = $.parseJSON(data);
