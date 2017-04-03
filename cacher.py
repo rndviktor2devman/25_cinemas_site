@@ -13,7 +13,7 @@ class Cacher():
         self.cache = SimpleCache()
         self.count_refs = 0
         self.cached_refs = 0
-        self.update_number = 0
+        self.update_time = ''
 
     def cached(self, url, timeout=CACHE_TIMEOUT):
         cached_page = self.cache.get(url)
@@ -25,7 +25,6 @@ class Cacher():
         return page.content
 
     def cache_all_pages(self):
-        self.update_number += 1
         afisha_page = self.cached(AFISHA_URL, AFISHA_TIMEOUT)
         refs = ai.movie_refs(afisha_page)
         movies_data = []

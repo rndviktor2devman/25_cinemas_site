@@ -5,7 +5,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
             movies: [],
             showSpinner: false,
             allMovies: 0,
-            updateNumber: -1
+            updateDateTime: ''
         };
     },
 
@@ -28,12 +28,12 @@ var MoviesList = React.createClass({displayName: "MoviesList",
           success: function(data) {
               var movies_count = this.state.movies.length;
               var server_movies = data.count;
-              var updateNumber = this.state.updateNumber;
-              if(updateNumber != data.updateNumber){
+              var updateTime = this.state.updateDateTime;
+              if(updateTime != data.updateDateTime){
                   this._clean_movies();
-                  updateNumber = data.updateNumber
+                  updateTime = data.updateDateTime
               }
-              this.setState({showSpinner:(movies_count < server_movies), allMovies: server_movies, updateNumber: updateNumber});
+              this.setState({showSpinner:(movies_count < server_movies), allMovies: server_movies, updateDateTime: updateTime});
           }.bind(this),
           error: function(xhr, status, err) {
             console.error(this.props.url, status, err.toString());
