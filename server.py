@@ -39,7 +39,7 @@ def ping_by_timeout():
         thread.start()
     data = {
         'count': cacher.count_refs,
-        'updateDateTime': cacher.update_time
+        'updateNumber': cacher.update_number
     }
     return correct_response(data)
 

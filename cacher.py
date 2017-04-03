@@ -1,4 +1,3 @@
-import datetime
 import requests
 import afisha_interaction as ai
 from werkzeug.contrib.cache import SimpleCache
@@ -14,7 +13,7 @@ class Cacher():
         self.cache = SimpleCache()
         self.count_refs = 0
         self.cached_refs = 0
-        self.update_time = ''
+        self.update_number = 0
 
     def cached(self, url, timeout=CACHE_TIMEOUT):
         cached_page = self.cache.get(url)
@@ -26,7 +25,7 @@ class Cacher():
         return page.content
 
     def cache_all_pages(self):
-        self.update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        self.update_number += 1
         afisha_page = self.cached(AFISHA_URL, AFISHA_TIMEOUT)
         refs = ai.movie_refs(afisha_page)
         movies_data = []
@@ -68,6 +67,4 @@ class Cacher():
         self.cache.delete(AFISHA_URL)
 
     def caching_available(self):
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-        return self.cached_refs == self.count_refs and \
-               current_time != self.update_time
+        return self.cached_refs == self.count_refs
