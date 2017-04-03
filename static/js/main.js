@@ -26,7 +26,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
           cache: false,
           success: function(data) {
               var movies_count = this.state.movies.length;
-              var server_movies = data.data.count;
+              var server_movies = data.count;
               if(server_movies < movies_count){
                   this._clean_movies();
               }
@@ -48,9 +48,8 @@ var MoviesList = React.createClass({displayName: "MoviesList",
               type: 'GET',
               contentType: 'application/json;charset=UTF-8',
               success: function(data) {
-                  var json = $.parseJSON(data);
                   this.setState({
-                      movies: json.data.movies,
+                      movies: data.movies,
                   });
               }.bind(this),
               error: function(xhr, status, err) {
@@ -68,15 +67,12 @@ var MoviesList = React.createClass({displayName: "MoviesList",
           data: JSON.stringify(this.state),
           contentType: 'application/json;charset=UTF-8',
           success: function(data) {
-              var json = $.parseJSON(data);
-              if(json.data==='dropped') {
-                  this._clean_movies();
-              } else {
-                  console.log('forbidden dropping cache');
-              }
+              this._clean_movies();
           }.bind(this),
           error: function(xhr, status, err) {
-            console.error(this.props.url, status, err.toString());
+            if(xhr.status == 403){
+                console.log('caching still pending');
+            }
           }.bind(this)
         });
     },

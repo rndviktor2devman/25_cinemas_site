@@ -40,8 +40,7 @@ class Cacher():
             self.cached_refs += 1
 
     def renew_cache(self):
-        old_cache = self.cache.get(MOVIES_SET)
-        self.cache_all_pages(old_cache)
+        self.cache_all_pages()
 
     def afisha_timed_out(self):
         afisha = self.cache.get(AFISHA_URL)
