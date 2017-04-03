@@ -47,10 +47,19 @@ class Cacher():
         return afisha is None
 
     def get_movies_data(self):
-        data = []
+        movies = []
         if self.cache.get(MOVIES_SET) is not None:
-            data = self.cache.get(MOVIES_SET)
-        return data
+            movies = self.cache.get(MOVIES_SET)
+        return movies
+
+    def get_non_shown_movies(self, shown_movies):
+        output_movies = []
+        if self.cache.get(MOVIES_SET) is not None:
+            cached_movies = self.cache.get(MOVIES_SET)
+            for movie in cached_movies:
+                if movie['url'] not in shown_movies:
+                    output_movies.append(movie)
+        return output_movies
 
     def clean_cache(self):
         self.cache.delete(AFISHA_URL)

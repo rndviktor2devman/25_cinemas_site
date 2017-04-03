@@ -43,14 +43,16 @@ def ping_by_timeout():
     return correct_response(data)
 
 
-@app.route('/get_movies', methods=['GET'])
+@app.route('/get_movies', methods=['POST'])
 def get_movies_from_cache():
-    movies = cacher.get_movies_data()
+    shown_movies = request.json
+
+    movies = cacher.get_non_shown_movies(shown_movies)
 
     data = {
         'movies': movies
     }
-    return correct_response(data)
+    return correct_response(movies)
 
 
 @app.route('/renew_cache', methods=['POST'])

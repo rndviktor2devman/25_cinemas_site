@@ -41,14 +41,21 @@ var MoviesList = React.createClass({
         var movies = this.state.movies;
         if(movies.length < this.state.allMovies)
         {
+            var moviesUrls = [];
+            for(var i in movies){
+                moviesUrls.push(movies[i].url)
+            }
+
             var sendUrl = document.URL + 'get_movies';
             $.ajax({
               url: sendUrl,
-              type: 'GET',
+              type: 'POST',
+              data: JSON.stringify(moviesUrls),
               contentType: 'application/json;charset=UTF-8',
               success: function(data) {
+                  movies = movies.concat(data);
                   this.setState({
-                      movies: data.movies,
+                      movies: movies,
                   });
               }.bind(this),
               error: function(xhr, status, err) {
