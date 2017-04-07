@@ -31,7 +31,6 @@ var MoviesList = React.createClass({displayName: "MoviesList",
               var updateTime = this.state.updateDateTime;
               if(updateTime != data.updateDateTime){
                   this._clean_movies();
-                  updateTime = data.updateDateTime
               }
               this.setState({showSpinner:(movies_count < server_movies), allMovies: server_movies, updateDateTime: updateTime});
           }.bind(this),
