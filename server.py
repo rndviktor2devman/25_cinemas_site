@@ -54,9 +54,7 @@ def get_movies_from_cache():
 
 @app.route('/renew_cache', methods=['POST'])
 def clean_cache():
-    if cacher.caching_available():
-        cacher.clean_cache()
-        start_queue()
+    if start_queue():
         return correct_response()
     else:
         return forbidden_access()
@@ -66,6 +64,9 @@ def start_queue():
     if cacher.caching_available():
         thread = Thread(target=cacher.cache_all_pages)
         thread.start()
+        return True
+    else:
+        return False
 
 
 cacher = Cacher()
