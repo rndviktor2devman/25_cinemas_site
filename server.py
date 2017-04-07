@@ -2,7 +2,6 @@ from flask import Flask, render_template, json, request
 from cacher import Cacher
 import afisha_interaction as ai
 from threading import Thread
-import datetime
 
 
 app = Flask(__name__)
@@ -39,8 +38,8 @@ def ping_by_timeout():
         thread = Thread(target=cacher.renew_cache)
         thread.start()
     data = {
-        'count': cacher.count_refs,
-        'updateDateTime': cacher.update_time
+        'count': cacher.count_refs(),
+        'updateDateTime': cacher.update_time()
     }
     return correct_response(data)
 
@@ -50,17 +49,12 @@ def get_movies_from_cache():
     shown_movies = request.json
 
     movies = cacher.get_non_shown_movies(shown_movies)
-
-    data = {
-        'movies': movies
-    }
     return correct_response(movies)
 
 
 @app.route('/renew_cache', methods=['POST'])
 def clean_cache():
     if cacher.caching_available():
-        cacher.update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         cacher.clean_cache()
         start_queue()
         return correct_response()
