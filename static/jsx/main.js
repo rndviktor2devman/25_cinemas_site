@@ -4,7 +4,7 @@ var MoviesList = React.createClass({
             movies: [],
             showSpinner: false,
             allMovies: 0,
-            updateDateTime: []
+            updateDateTime: ''
         };
     },
 
@@ -31,9 +31,13 @@ var MoviesList = React.createClass({
                   all_movies = data.count;
               }
               var updateTime = this.state.updateDateTime;
-              if(updateTime.indexOf(data.updateDateTime) == -1){
-                  this._clean_movies();
-                  updateTime.push(data.updateDateTime);
+              if(data.updateDateTime){
+                  if(updateTime.length > 0){
+                      if(data.updateDateTime !== updateTime){
+                          this._clean_movies();
+                      }
+                  }
+                  updateTime = data.updateDateTime;
               }
               this.setState({showSpinner:(movies_count < all_movies), allMovies: all_movies, updateDateTime: updateTime});
           }.bind(this),
