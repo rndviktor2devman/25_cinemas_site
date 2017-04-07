@@ -5,10 +5,10 @@ from werkzeug.contrib.cache import SimpleCache
 
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 CACHE_TIMEOUT = 12 * 60 * 60  # 12 hours timeout
-AFISHA_TIMEOUT = 60 * 60  # 1 hour timeout
+AFISHA_TIMEOUT = 20 * 60  # 20 min timeout
 MOVIES_SET = 'movies_data'
 COUNT_REFS = 'count_refs'
-CACHED_REFS = 'cached_refs'
+CACHING_AVAILABLE = 'caching_available'
 UPDATE_TIME = 'update_time'
 
 
@@ -16,7 +16,7 @@ class Cacher():
     def __init__(self):
         self.cache = SimpleCache()
         self.cache.set(COUNT_REFS, 0)
-        self.cache.set(CACHED_REFS, 0)
+        self.cache.set(CACHING_AVAILABLE, True)
         self.cache.set(UPDATE_TIME, '')
 
     def cached(self, url, timeout=CACHE_TIMEOUT):
@@ -29,11 +29,11 @@ class Cacher():
         return page.content
 
     def cache_all_pages(self):
+        self.cache.set(CACHING_AVAILABLE, False)
         afisha_page = self.cached(AFISHA_URL, AFISHA_TIMEOUT)
         refs = ai.movie_refs(afisha_page)
         movies_data = []
         self.cache.set(COUNT_REFS, len(refs))
-        self.cache.set(CACHED_REFS, 0)
         for ref in refs:
             if 'http:https:' in ref:
                 ref = ref.replace('http:', '')
@@ -42,14 +42,14 @@ class Cacher():
             movies_data.append(movie_data)
             self.cache.delete(MOVIES_SET)
             self.cache.set(MOVIES_SET, movies_data, CACHE_TIMEOUT)
-            self.cache.set(CACHED_REFS, self.cache.get(CACHED_REFS) + 1)
+        self.cache.set(CACHING_AVAILABLE, True)
 
     def renew_cache(self):
         self.cache_all_pages()
 
     def afisha_timed_out(self):
         afisha = self.cache.get(AFISHA_URL)
-        return afisha is None
+        return afisha is None and self.caching_available()
 
     def get_movies_data(self):
         movies = []
@@ -73,11 +73,8 @@ class Cacher():
     def count_refs(self):
         return self.cache.get(COUNT_REFS)
 
-    def cached_refs(self):
-        return self.cache.get(CACHED_REFS)
-
     def update_time(self):
         return self.cache.get(UPDATE_TIME)
 
     def caching_available(self):
-        return self.cached_refs() == self.count_refs()
+        return self.cache.get(CACHING_AVAILABLE)
