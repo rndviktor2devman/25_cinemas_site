@@ -6,18 +6,18 @@ This Project fetches some information from [site](http://www.afisha.ru) and prov
 
 The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
 
-##Requirements
+## Requirements
 Before debug locally install requirements:
 ```
 pip3 install -r requirements.txt
 ```
-##Run
+## Run
 
-###on localhost:
+### on localhost:
 ```
 python3 server.py
 ```
-###with heroku locally
+### with heroku locally
 ```
 heroku local web
 ```
