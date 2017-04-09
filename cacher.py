@@ -1,7 +1,7 @@
 import requests
 import datetime
 import afisha_interaction as ai
-from werkzeug.contrib.cache import SimpleCache
+from werkzeug.contrib.cache import FileSystemCache
 
 AFISHA_URL = "http://www.afisha.ru/msk/schedule_cinema/"
 CACHE_TIMEOUT = 12 * 60 * 60  # 12 hours timeout
@@ -14,7 +14,7 @@ UPDATE_TIME = 'update_time'
 
 class Cacher():
     def __init__(self):
-        self.cache = SimpleCache()
+        self.cache = FileSystemCache('cache_dir')
         self.cache.set(COUNT_REFS, 0)
         self.cache.set(CACHING_AVAILABLE, True)
         self.cache.set(UPDATE_TIME, '')
