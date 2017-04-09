@@ -71,14 +71,22 @@ def api_about():
 
 @app.route('/api/list', methods=['GET'])
 def api_main():
-    return jsonify(cacher.get_movies_data())
+    return app.response_class(
+        response=json.dumps(cacher.get_movies_data(), ensure_ascii=False),
+        status=200,
+        content_type="application/json; charset=utf-8"
+    )
 
 
 @app.route('/api/movie/<int:param>/', methods=['GET'])
 def api_movie(param):
     url = 'http://www.afisha.ru/movie/{}'.format(param)
     movie_page = cacher.cached(url)
-    return jsonify(ai.json_data(movie_page))
+    return app.response_class(
+        response=json.dumps(ai.json_data(movie_page), ensure_ascii=False),
+        status=200,
+        content_type="application/json; charset=utf-8"
+    )
 
 
 @app.route("/")
