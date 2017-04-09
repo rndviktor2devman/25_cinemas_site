@@ -33,7 +33,7 @@
     border-radius: 5px;
 }
 
-code{
+.code{
     padding: 2px 4px;
     font-size: 90%;
     color: #3F3F44;
@@ -41,7 +41,7 @@ code{
     border-radius: 4px;
 }
 
-table{
+table.table_api{
     width: 100%;
     margin: 1.5em 0;
     border: 1px solid #dedede;
@@ -51,11 +51,11 @@ table{
     border-collapse: collapse;
 }
 
-table th{
+table.table_api th{
     background: #eeeeee;
 }
 
-table td, table th{
+table.table_api td, table th{
     padding: .5em;
     border-right: 1px solid #dedede;
 }
