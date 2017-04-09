@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, request
+from flask import Flask, render_template, json, request, jsonify
 from cacher import Cacher
 import afisha_interaction as ai
 from threading import Thread
@@ -24,14 +24,6 @@ def forbidden_access():
     )
 
 
-def correct_response(data=None):
-    return app.response_class(
-        response=json.dumps(data),
-        status=200,
-        mimetype='application/json'
-    )
-
-
 @app.route('/ping', methods=['GET'])
 def ping_by_timeout():
     if cacher.afisha_timed_out():
@@ -41,7 +33,7 @@ def ping_by_timeout():
         'count': cacher.count_refs(),
         'updateDateTime': cacher.update_time()
     }
-    return correct_response(data)
+    return jsonify(data)
 
 
 @app.route('/get_movies', methods=['POST'])
@@ -49,13 +41,13 @@ def get_movies_from_cache():
     shown_movies = request.json
 
     movies = cacher.get_non_shown_movies(shown_movies)
-    return correct_response(movies)
+    return jsonify(movies)
 
 
 @app.route('/renew_cache', methods=['POST'])
 def clean_cache():
     if start_queue():
-        return correct_response()
+        return jsonify()
     else:
         return forbidden_access()
 
@@ -79,14 +71,14 @@ def api_about():
 
 @app.route('/api/list', methods=['GET'])
 def api_main():
-    return correct_response(cacher.get_movies_data())
+    return jsonify(cacher.get_movies_data())
 
 
 @app.route('/api/movie/<int:param>/', methods=['GET'])
 def api_movie(param):
     url = 'http://www.afisha.ru/movie/{}'.format(param)
     movie_page = cacher.cached(url)
-    return correct_response(ai.json_data(movie_page))
+    return jsonify(ai.json_data(movie_page))
 
 
 @app.route("/")
