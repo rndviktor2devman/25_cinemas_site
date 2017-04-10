@@ -29,11 +29,11 @@ def ping_by_timeout():
     if cacher.afisha_timed_out():
         thread = Thread(target=cacher.renew_cache)
         thread.start()
-    data = {
+    cache_state = {
         'count': cacher.count_refs(),
         'updateDateTime': cacher.update_time()
     }
-    return jsonify(data)
+    return jsonify(cache_state)
 
 
 @app.route('/get_movies', methods=['POST'])
