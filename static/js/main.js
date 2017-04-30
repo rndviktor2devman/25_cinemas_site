@@ -98,6 +98,7 @@ var MoviesList = React.createClass({displayName: "MoviesList",
         var movies = this.state.movies;
         var showSpinner = this.state.showSpinner;
         var allMovies = this.state.allMovies;
+        var missingText = React.createElement("span", {className: "fa fa-user-secret"}, " Информация отсутствует");
         return(
             React.createElement("div", null, 
                 React.createElement("div", {className: "state_panel col-md-12 row"}, 
@@ -116,13 +117,13 @@ var MoviesList = React.createClass({displayName: "MoviesList",
                                 React.createElement("div", {className: "col-xs-4"}, 
                                     React.createElement("div", {className: "moviediv"}, 
                                         React.createElement("a", {href:  movie.url}, 
-                                            React.createElement("img", {src:  movie.image, className: "img-rounded movie_image", alt:  movie.title})
+                                            React.createElement("img", {src:  movie.image? movie.image:"static/img/no_poster.png", className: "img-rounded movie_image", alt:  movie.title})
                                         )
                                     ), 
                                     React.createElement("ul", null, 
-                                        React.createElement("li", null, React.createElement("b", null, "Режиссер: "),  movie.director), 
-                                        React.createElement("li", null, React.createElement("b", null, "Продолжительность: "),  movie.duration), 
-                                        React.createElement("li", null, React.createElement("b", null, "Дата релиза: "),  movie.release)
+                                        React.createElement("li", null, React.createElement("b", null, "Режиссер: "),  movie.director? movie.director: missingText), 
+                                        React.createElement("li", null, React.createElement("b", null, "Продолжительность: "),  movie.duration? movie.duration: missingText), 
+                                        React.createElement("li", null, React.createElement("b", null, "Дата релиза: "),  movie.release? movie.release: missingText)
                                     )
                                 ), 
                                 React.createElement("div", {className: "col-xs-7"}, 
@@ -131,14 +132,14 @@ var MoviesList = React.createClass({displayName: "MoviesList",
                                     ), 
                                     React.createElement("div", {className: "row"}, 
                                       React.createElement("ul", null, 
-                                        React.createElement("li", null, React.createElement("b", null, "Жанр: "),  movie.genre), 
+                                        React.createElement("li", null, React.createElement("b", null, "Жанр: "),  movie.genre? movie.genre: missingText), 
                                         React.createElement("li", null, React.createElement("b", null, "Оценка/Голосовало: "),  movie.rating, React.createElement("b", null, "/"),  movie.voted)
                                       )
                                     ), 
                                     React.createElement("h3", null, React.createElement("a", {href:  movie.url},  movie.title)), 
-                                    React.createElement("p", null,  movie.description), 
+                                    React.createElement("p", null,  movie.description? movie.description: missingText), 
                                     React.createElement("p", null, React.createElement("b", null, "Описание:")), 
-                                    React.createElement("p", null,  movie.text)
+                                    React.createElement("p", null,  movie.text? movie.text: missingText)
                                 )
                             )
                         )

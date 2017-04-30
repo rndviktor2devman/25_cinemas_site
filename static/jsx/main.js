@@ -97,6 +97,7 @@ var MoviesList = React.createClass({
         var movies = this.state.movies;
         var showSpinner = this.state.showSpinner;
         var allMovies = this.state.allMovies;
+        var missingText = <span className="fa fa-user-secret"> Информация отсутствует</span>;
         return(
             <div>
                 <div className="state_panel col-md-12 row">
@@ -115,13 +116,13 @@ var MoviesList = React.createClass({
                                 <div className="col-xs-4">
                                     <div className="moviediv">
                                         <a href={ movie.url }>
-                                            <img src={ movie.image } className="img-rounded movie_image" alt={ movie.title }/>
+                                            <img src={ movie.image? movie.image:"static/img/no_poster.png" } className="img-rounded movie_image" alt={ movie.title }/>
                                         </a>
                                     </div>
                                     <ul>
-                                        <li><b>Режиссер: </b>{ movie.director }</li>
-                                        <li><b>Продолжительность: </b>{ movie.duration }</li>
-                                        <li><b>Дата релиза: </b>{ movie.release }</li>
+                                        <li><b>Режиссер: </b>{ movie.director? movie.director: missingText }</li>
+                                        <li><b>Продолжительность: </b>{ movie.duration? movie.duration: missingText }</li>
+                                        <li><b>Дата релиза: </b>{ movie.release? movie.release: missingText }</li>
                                     </ul>
                                 </div>
                                 <div className="col-xs-7">
@@ -130,14 +131,14 @@ var MoviesList = React.createClass({
                                     </div>
                                     <div className="row">
                                       <ul>
-                                        <li><b>Жанр: </b>{ movie.genre }</li>
+                                        <li><b>Жанр: </b>{ movie.genre? movie.genre: missingText }</li>
                                         <li><b>Оценка/Голосовало: </b>{ movie.rating }<b>/</b>{ movie.voted }</li>
                                       </ul>
                                     </div>
                                     <h3><a href={ movie.url }>{ movie.title }</a></h3>
-                                    <p>{ movie.description }</p>
+                                    <p>{ movie.description? movie.description: missingText }</p>
                                     <p><b>Описание:</b></p>
-                                    <p>{ movie.text }</p>
+                                    <p>{ movie.text? movie.text: missingText }</p>
                                 </div>
                             </div>
                         </li>
